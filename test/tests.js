@@ -547,6 +547,37 @@ var Tests = (function() {
       assertEqual( 'whitespace', render('\n{{-"whitespace"-}}\n')  )
       assertEqual( 'whitespace ', render(' {{-"whitespace"}} ')  )
       assertEqual( ' whitespace', render(' {{"whitespace"-}} ')  )
-    }
+    },
+
+    note6: "Testing strictVariables...",
+
+    '{{ missingVar }}': function() {
+      var template = Liquid.parse("{{ missingVar }}");
+      var error;
+      template.strictVariables = true;
+      try {
+        template.renderWithErrors({otherVar: ''})
+      } catch (e) {
+        error = e;
+      }
+      assertNotNull(error);
+    },
+
+    '{{ missingVar1 }}  {{ missingVar2 }}': function() {
+      var template = Liquid.parse("{{ missingVar1 }} {{ missingVar2 }}");
+      template.strictVariables = true;
+      template.render({otherVar: ''});
+
+      assertEqual(2, template.errors.length);
+    },
+
+    '{{ obj.missingField }}': function() {
+      var template = Liquid.parse("{{ obj.missingField }}");
+      template.strictVariables = true;
+      template.render({obj: {otherField: ''}});
+
+      assertEqual(1, template.errors.length);
+    },
+
   }
 })();

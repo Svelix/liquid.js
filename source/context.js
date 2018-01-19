@@ -1,11 +1,12 @@
 Liquid.Context = Liquid.Class.extend({
 
-  init: function(assigns, registers, rethrowErrors) {
+  init: function(assigns, registers, rethrowErrors, strictVariables) {
     this.scopes = [ assigns ? assigns : {} ];
     this.registers = registers ? registers : {};
     this.errors = [];
     this.rethrowErrors = rethrowErrors;
     this.strainer = Liquid.Strainer.create(this);
+    this.strictVariables = strictVariables;
   },
 
   get: function(varname) {
@@ -147,6 +148,8 @@ Liquid.Context = Liquid.Class.extend({
       }
     };
 //    console.log('findVariable("'+ key +'") is returning NULL')
+    if (this.strictVariables)
+      throw "undefined variable " + key;
     return null;
   },
 
@@ -203,6 +206,8 @@ Liquid.Context = Liquid.Class.extend({
           // No key was present with the desired value and it wasn't one of the directly supported
           // keywords either. The only thing we got left is to return nil
           else {
+            if (self.strictVariables)
+              throw "undefined variable " + markup;
             return object = null;
           }
           if(self._isObject(object) && ('setContext' in object)){ object.setContext(self); }

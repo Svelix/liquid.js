@@ -6,6 +6,7 @@ Liquid.Template = Liquid.Class.extend({
     this.assigns = {};
     this.errors = [];
     this.rethrowErrors = false;
+    this.strictVariables = false;
   },
 
   parse: function(src) {
@@ -37,7 +38,7 @@ Liquid.Template = Liquid.Class.extend({
         //this.registers.update(args.registers);
         Liquid.extensions.object.update.call(this.registers, args.registers);
       }
-      context = new Liquid.Context(this.assigns, this.registers, this.rethrowErrors)
+      context = new Liquid.Context(this.assigns, this.registers, this.rethrowErrors, this.strictVariables)
     }
     
     if(args.filters){ context.addFilters(arg.filters); }

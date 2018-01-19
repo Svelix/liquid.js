@@ -331,12 +331,13 @@ Liquid.Strainer.create = function(context) {
 }
 Liquid.Context = Liquid.Class.extend({
 
-  init: function(assigns, registers, rethrowErrors) {
+  init: function(assigns, registers, rethrowErrors, strictVariables) {
     this.scopes = [ assigns ? assigns : {} ];
     this.registers = registers ? registers : {};
     this.errors = [];
     this.rethrowErrors = rethrowErrors;
     this.strainer = Liquid.Strainer.create(this);
+    this.strictVariables = strictVariables;
   },
 
   get: function(varname) {
@@ -464,6 +465,8 @@ Liquid.Context = Liquid.Class.extend({
         return variable;
       }
     };
+    if (this.strictVariables)
+      throw "undefined variable " + key;
     return null;
   },
 
@@ -508,6 +511,8 @@ Liquid.Context = Liquid.Class.extend({
             if(self._isObject(object) && 'toLiquid' in object){ object = object.toLiquid(); }
           }
           else {
+            if (self.strictVariables)
+              throw "undefined variable " + markup;
             return object = null;
           }
           if(self._isObject(object) && ('setContext' in object)){ object.setContext(self); }
@@ -544,6 +549,7 @@ Liquid.Template = Liquid.Class.extend({
     this.assigns = {};
     this.errors = [];
     this.rethrowErrors = false;
+    this.strictVariables = false;
   },
 
   parse: function(src) {
@@ -571,7 +577,7 @@ Liquid.Template = Liquid.Class.extend({
       if(args.registers){
         Liquid.extensions.object.update.call(this.registers, args.registers);
       }
-      context = new Liquid.Context(this.assigns, this.registers, this.rethrowErrors)
+      context = new Liquid.Context(this.assigns, this.registers, this.rethrowErrors, this.strictVariables)
     }
 
     if(args.filters){ context.addFilters(arg.filters); }
