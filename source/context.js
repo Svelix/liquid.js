@@ -195,10 +195,10 @@ Liquid.Context = Liquid.Class.extend({
             else { object  = object[pos]; }
           }
           // Some special cases. If no key with the same name was found we interpret following calls
-          // as commands and call them on the current object if it exists
-          else if( object && typeof(object[part]) == 'function' && Liquid.extensions.arrayTools.include(['length', 'size', 'first', 'last'], part) ) {
-            object = object[part].apply(part);
-            if('toLiquid' in object){ object = object.toLiquid(); }
+          // as filters and apply them on the current object
+          else if( object && Liquid.extensions.arrayTools.include(['size', 'first', 'last'], part) ) {
+            object = self.strainer[part].call(this, object);
+            if(self._isObject(object) && 'toLiquid' in object){ object = object.toLiquid(); }
           }
           // No key was present with the desired value and it wasn't one of the directly supported
           // keywords either. The only thing we got left is to return nil

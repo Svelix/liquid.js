@@ -78,9 +78,19 @@ var Tests = (function() {
       assertEqual( '3', render("{{ user | size }}", {user:'Bob'})  )
     },
 
+    '{{ string.size }}': function() {
+      assertEqual( '3', render("{{user.size}}", {user:'Bob'})  )
+      assertEqual( '3', render("{{ user.size }}", {user:'Bob'})  )
+    },
+
     '{{ collection | size }}': function() {
-      assertEqual( '3', render("{{user|size}}", {user:['','','']})  )
-      assertEqual( '3', render("{{ user | size }}", {user:['','','']})  )
+      assertEqual( '3', render("{{coll|size}}", {coll:['','','']})  )
+      assertEqual( '3', render("{{ coll | size }}", {coll:['','','']})  )
+    },
+
+    '{{ collection.size }}': function() {
+      assertEqual( '3', render("{{coll.size}}", {coll:['','','']})  )
+      assertEqual( '3', render("{{ coll.size }}", {coll:['','','']})  )
     },
 
     '{{ string | upcase }}': function() {
@@ -258,11 +268,19 @@ var Tests = (function() {
       assertEqual( "1", render("{{ c | first }}", {c:[1,2,3]}) );
     },
 
+    "{{ collection.first }}": function() {
+      assertEqual("1", render("{{c.first}}", {c: [1, 2, 3]}));
+    },
+
     "{{ collection | last }}": function() {
       assertEqual( "3", render("{{(1..3)|last}}") );
       assertEqual( "3", render("{{ (1..3) | last }}") );
       assertEqual( "3", render("{{c|last}}", {c:[1,2,3]}) );
       assertEqual( "3", render("{{ c | last }}", {c:[1,2,3]}) );
+    },
+
+    "{{ collection.last }}": function() {
+      assertEqual("3", render("{{c.last}}", {c: [1, 2, 3]}));
     },
 
     '{{ number | plus:y }}': function() {
